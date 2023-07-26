@@ -12,21 +12,48 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <title>Agora Video Call</title>
+    <title>FaceTime</title>
   </head>
   <body>
-    <div id="stream-wrap">
-      <div id="videoStreams"></div>
-
-      <div id="controllers">
-        <div id="leave">Leave</div>
-        <div id="muteMic">Mute Mic</div>
-        <div id="muteCam">Mute Cam</div>
-      </div>
+    <div id="backgroundBlur">
+      <video id="bgPlay" autoplay playsinline muted></video>
     </div>
-    <button id="joinBtn">Join</button>
+    <main>
+      <div class="main-wrap">
+        <h1 style="margin-bottom: 30px">FaceTime</h1>
+
+        <form id="createChannelForm">
+          <input
+            id="channelName"
+            type="text"
+            placeholder="Room Name"
+            required
+          />
+          <button id="joinBtn" type="submit">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+            Share
+          </button>
+        </form>
+        <p>
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt
+          nesciunt doloremque possimus odit natus placeat nostrum voluptatibus
+          delectus corporis ratione! Error, fugit excepturi nulla officiis
+          accusamus explicabo placeat cumque magni!
+        </p>
+      </div>
+      <!-- <div id="stream-wrap">
+        <div id="videoStreams"></div>
+
+        <div id="controllers">
+          <div id="leave">Leave</div>
+          <div id="muteMic">Mute Mic</div>
+          <div id="muteCam">Mute Cam</div>
+        </div>
+      </div> -->
+    </main>
 
     <script src="/AgoraRTC_N-4.18.2.js"></script>
     <script src="/main.js"></script>
+    <script src="/offline.js"></script>
   </body>
 </html>
