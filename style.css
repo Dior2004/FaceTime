@@ -67,10 +67,10 @@ body main .main-wrap {
 }
 
 #createChannelForm > input {
-  width: 160px;
+  width: 170px;
   height: 100%;
   font-size: 16px;
-  padding: 20px;
+  padding: 15px;
   margin-right: 10px;
   caret-color: #00f731b3;
   color: #fff;
@@ -105,10 +105,22 @@ body main .main-wrap {
   margin-right: 5px;
 }
 
-body main .main-wrap p {
-  width: 350px;
-  text-align: center;
+body main .main-wrap h3 {
   margin-top: 30px;
+  letter-spacing: 0.5px;
+}
+
+body main .main-wrap p {
+  width: 330px;
+  text-align: center;
+  margin-top: 10px;
+  letter-spacing: 0.5px;
+}
+
+#devoted-message {
+  position: absolute;
+  bottom: 70px;
+  color: #d1dae288;
 }
 
 #stream-wrap {
