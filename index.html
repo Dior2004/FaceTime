@@ -34,29 +34,44 @@
             Share
           </button>
         </form>
-        <h3>Instuctions</h3>
-        <p>
-          To use the app, simply enter a unique <strong>"Room Name"</strong> of
-          your choice, then proceed to create the room by clicking on the
-          <strong>"Share"</strong> button. The app will automatically generate a
-          link containing the room name. Share this link with the individuals
-          you wish to communicate with, and they can join the conversation by
-          clicking on the shared link.
-        </p>
+
+        <h3 id="headingMessage"></h3>
+        <p id="userMessage"></p>
         <p id="devoted-message">Devoted to my mother</p>
       </div>
-      <!-- <div id="stream-wrap">
-        <div id="videoStreams"></div>
+      <div id="stream-wrap">
+        <div>
+          <div id="videoStreams">
+            <!-- <div class="video-container">
+              <div class="video-player">
+                <video id="myVideoPlayer" autoplay playsinline muted></video>
+              </div>
+            </div> -->
+          </div>
 
-        <div id="controllers">
-          <div id="leave">Leave</div>
-          <div id="muteMic">Mute Mic</div>
-          <div id="muteCam">Mute Cam</div>
+          <div id="controllers">
+            <div id="leave">Leave</div>
+            <div id="muteMic">Mute Mic</div>
+            <div id="muteCam">Mute Cam</div>
+          </div>
         </div>
-      </div> -->
+      </div>
     </main>
 
-    <script src="/offline.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/service-worker.js")
+            .then((registration) => {
+              console.log("Service Worker registered:", registration);
+            })
+            .catch((error) => {
+              console.log("Service Worker registration failed:", error);
+            });
+        });
+      }
+    </script>
     <script src="/AgoraRTC_N-4.18.2.js"></script>
     <script src="/main.js"></script>
   </body>
