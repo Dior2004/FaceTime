@@ -52,12 +52,11 @@ function agoraCall() {
 
     localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
 
-    let player = `
-    <div class="video-container" id="user-container-${UID}">
-      <div class="video-player" id="user-${UID}"></div>
-    </div>`;
+    let player = `<div class="video-player" id="user-${UID}"></div>`;
 
-    videoStreams.insertAdjacentHTML("beforeend", player);
+    document
+      .getElementById("myVideoPlayer")
+      .insertAdjacentHTML("beforeend", player);
 
     localTracks[1].play(`user-${UID}`);
 
@@ -80,7 +79,9 @@ function agoraCall() {
 
     joinBtn.disabled = false;
     controllers.style.display = "none";
-    videoStreams.innerHTML = "";
+    videoStreams.innerHTML = `<div class="video-container chosen" id="myVideoPlayer"></div>`;
+    micIcon.className = "fa-solid fa-microphone";
+    camIcon.className = "fa-solid fa-video";
   };
 
   let joinStream = async (e) => {
@@ -113,6 +114,18 @@ function agoraCall() {
       user.videoTrack.play(`user-${user.uid}`);
     }
 
+    let allVideos = document.querySelectorAll(".video-container");
+    allVideos.forEach((e) => e.classList.remove("chosen"));
+
+    lastChildDetection();
+
+    allVideos.forEach((item) =>
+      item.addEventListener("click", () => {
+        allVideos.forEach((i) => i.classList.remove("chosen"));
+        item.classList.toggle("chosen");
+      })
+    );
+
     if (mediaType === "audio") {
       user.audioTrack.play();
     }
@@ -123,29 +136,23 @@ function agoraCall() {
     document.getElementById(`user-container-${user.uid}`).remove();
   };
 
-  let toggleMic = async (e) => {
-    console.log("working");
+  let toggleMic = async () => {
     if (localTracks[0].muted) {
       await localTracks[0].setMuted(false);
-      e.target.innerText = "Mic on";
-      e.target.style = "background-color: catedblue";
+      micIcon.className = "fa-solid fa-microphone";
     } else {
       await localTracks[0].setMuted(true);
-      e.target.innerText = "Mic off";
-      e.target.style = "background-color: #ee4b2b";
+      micIcon.className = "fa-solid fa-microphone-slash";
     }
   };
 
-  let toggleCam = async (e) => {
-    console.log("working");
+  let toggleCam = async () => {
     if (localTracks[1].muted) {
       await localTracks[1].setMuted(false);
-      e.target.innerText = "Cam on";
-      e.target.style = "background-color: catedblue";
+      camIcon.className = "fa-solid fa-video";
     } else {
       await localTracks[1].setMuted(true);
-      e.target.innerText = "Cam off";
-      e.target.style = "background-color: #ee4b2b";
+      camIcon.className = "fa-solid fa-video-slash";
     }
   };
 
@@ -154,3 +161,38 @@ function agoraCall() {
   muteMic.addEventListener("click", toggleMic);
   muteCam.addEventListener("click", toggleCam);
 }
+
+function lastChildDetection() {
+  let fatherEllement = document.querySelector("#videoStreams");
+
+  let lastElementChild = null;
+  let currentNode = fatherEllement.lastChild;
+
+  while (currentNode !== null) {
+    if (currentNode.nodeType === Node.ELEMENT_NODE) {
+      lastElementChild = currentNode;
+      break;
+    }
+    currentNode = currentNode.previousSibling;
+  }
+
+  lastElementChild.classList.add("chosen");
+}
+
+function handleMutation(mutationsList) {
+  for (const mutation of mutationsList) {
+    if (mutation.type === "childList") {
+      lastChildDetection();
+    }
+  }
+}
+
+const fatherEllement = document.querySelector("#videoStreams");
+
+const observer = new MutationObserver(handleMutation);
+const observerOptions = {
+  childList: true,
+  subtree: false,
+};
+
+observer.observe(fatherEllement, observerOptions);
