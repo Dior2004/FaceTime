@@ -213,7 +213,7 @@ video {
   width: 330px;
   height: 80px;
   border-radius: 25px;
-  background-color: rgba(0, 0, 0, 0.471);
+  background-color: rgba(30, 30, 30, 0.5);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   box-shadow: 0 8px 18px #00000055;

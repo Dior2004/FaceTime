@@ -1,4 +1,4 @@
-const cacheName = "FaceTime version1";
+const cacheName = "FaceTime old version";
 
 const cacheAssets = ["/", "/index.html", "/style.css", "/main.js"];
 
