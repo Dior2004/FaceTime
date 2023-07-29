@@ -2,12 +2,13 @@ let mainWrap = document.querySelector(".main-wrap");
 let headingMessage = document.querySelector("#headingMessage");
 let createChannelForm = document.getElementById("createChannelForm");
 let streamWrap = document.getElementById("stream-wrap");
+let channelName = document.getElementById("channelName");
 let joinBtn = document.getElementById("joinBtn");
 let leave = document.getElementById("leave");
 let muteMic = document.getElementById("muteMic");
 let muteCam = document.getElementById("muteCam");
 const APP_ID = "62c1bcd773ea4592bb4f0f5ff8ad6b2e";
-const CHANNEL = "main";
+let CHANNEL = "main";
 
 let bgEffect = async () => {
   localStream = await navigator.mediaDevices.getUserMedia({
@@ -44,7 +45,7 @@ function agoraCall() {
   let localTracks = [];
   let remoteUsers = {};
 
-  let joinAndDisplayLocalStream = async () => {
+  let joinAndDisplayLocalStream = async (CHANNEL) => {
     client.on("user-published", handleUserJoined);
     client.on("user-left", handleUserLeft);
 
@@ -78,7 +79,6 @@ function agoraCall() {
     }, 200);
 
     joinBtn.disabled = false;
-    controllers.style.display = "none";
     videoStreams.innerHTML = `<div class="video-container chosen" id="myVideoPlayer"></div>`;
     micIcon.className = "fa-solid fa-microphone";
     camIcon.className = "fa-solid fa-video";
@@ -86,13 +86,32 @@ function agoraCall() {
 
   let joinStream = async (e) => {
     e.preventDefault();
+    CHANNEL = channelName.value;
     mainWrap.style = "opacity: 0; transition: 0.5s;";
     setTimeout(() => {
       streamWrap.style = "top: 0; border-radius: 0; transition: 0.5s;";
     }, 200);
-    await joinAndDisplayLocalStream();
+    channelName.blur();
+
+    const title = window.document.title;
+    const roomName = CHANNEL;
+    const url = `https://join-facetime-dev1.netlify.app/`;
+
+    if (navigator.share) {
+      navigator
+        .share({
+          title: `${title}`,
+          text: `You have been called to Room: ${roomName}`,
+          url: `${url}`,
+        })
+        .then(() => {
+          console.log("shared successfully");
+        })
+        .catch((error) => console.log(error));
+    }
+
+    await joinAndDisplayLocalStream(CHANNEL);
     joinBtn.disabled = true;
-    controllers.style.display = "flex";
   };
 
   let handleUserJoined = async (user, mediaType) => {
@@ -196,3 +215,11 @@ const observerOptions = {
 };
 
 observer.observe(fatherEllement, observerOptions);
+
+leave.addEventListener("click", () => {
+  setTimeout(() => {
+    if (!navigator.onLine) {
+      window.location.reload();
+    }
+  }, 700);
+});
