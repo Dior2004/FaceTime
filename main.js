@@ -4,9 +4,9 @@ let createChannelForm = document.getElementById("createChannelForm");
 let streamWrap = document.getElementById("stream-wrap");
 let channelName = document.getElementById("channelName");
 let joinBtn = document.getElementById("joinBtn");
-let leave = document.getElementById("leave");
 let muteMic = document.getElementById("muteMic");
 let muteCam = document.getElementById("muteCam");
+let clicked = false;
 const APP_ID = "62c1bcd773ea4592bb4f0f5ff8ad6b2e";
 let CHANNEL = "main";
 
@@ -51,7 +51,10 @@ function agoraCall() {
 
     let UID = await client.join(APP_ID, CHANNEL, null, null);
 
-    localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
+    localTracks = [
+      await AgoraRTC.createMicrophoneAudioTrack(),
+      await AgoraRTC.createCameraVideoTrack({ facingMode: "user" }),
+    ];
 
     let player = `<div class="video-player" id="user-${UID}"></div>`;
 
@@ -62,6 +65,8 @@ function agoraCall() {
     localTracks[1].play(`user-${UID}`);
 
     await client.publish([localTracks[0], localTracks[1]]);
+    document.querySelector("#myVideoPlayer > div > div > video").style =
+      "transform: scaleX(-1);";
   };
 
   let leaveAndRemoveLocalStream = async () => {
@@ -175,10 +180,65 @@ function agoraCall() {
     }
   };
 
+  let flipCam = async () => {
+    if (!clicked) {
+      clicked = !clicked; // true
+
+      flipCamMessage.style.display = "flex";
+
+      localTracks[1].stop();
+      localTracks[1].close();
+
+      await client.leave();
+
+      videoStreams.innerHTML = `<div class="video-container chosen" id="myVideoPlayer"></div>`;
+
+      client.on("user-published", handleUserJoined);
+      client.on("user-left", handleUserLeft);
+
+      let UID = await client.join(APP_ID, CHANNEL, null, null);
+
+      localTracks = [
+        await AgoraRTC.createMicrophoneAudioTrack(),
+        await AgoraRTC.createCameraVideoTrack({ facingMode: "environment" }),
+      ];
+
+      let player = `<div class="video-player" id="user-${UID}"></div>`;
+
+      document
+        .getElementById("myVideoPlayer")
+        .insertAdjacentHTML("beforeend", player);
+
+      localTracks[1].play(`user-${UID}`);
+
+      await client.publish([localTracks[0], localTracks[1]]);
+
+      document.getElementById("myVideoPlayer").style = "transform: scaleX(-1);";
+      flipCamMessage.style.display = "none";
+    } else {
+      clicked = !clicked; // false
+      flipCamMessage.style.display = "flex";
+
+      localTracks[1].stop();
+      localTracks[1].close();
+
+      await client.leave();
+
+      videoStreams.innerHTML = `<div class="video-container chosen" id="myVideoPlayer"></div>`;
+
+      await joinAndDisplayLocalStream(CHANNEL);
+      document.getElementById("myVideoPlayer").style = "transform: scaleX(1)";
+      flipCamMessage.style.display = "none";
+    }
+  };
+
   createChannelForm.addEventListener("submit", joinStream);
-  leave.addEventListener("click", leaveAndRemoveLocalStream);
+  document
+    .getElementById("leave")
+    .addEventListener("click", leaveAndRemoveLocalStream);
   muteMic.addEventListener("click", toggleMic);
   muteCam.addEventListener("click", toggleCam);
+  document.getElementById("rotateCamera").addEventListener("click", flipCam);
 }
 
 function lastChildDetection() {
@@ -216,7 +276,7 @@ const observerOptions = {
 
 observer.observe(fatherEllement, observerOptions);
 
-leave.addEventListener("click", () => {
+document.getElementById("leave").addEventListener("click", () => {
   setTimeout(() => {
     if (!navigator.onLine) {
       window.location.reload();
