@@ -1,4 +1,4 @@
-const cacheName = "FaceTime final version";
+const cacheName = "FaceTime cache";
 
 const cacheAssets = [
   "/",
