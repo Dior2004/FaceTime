@@ -82,6 +82,7 @@ function agoraCall() {
     }, 200);
 
     joinBtn.disabled = false;
+    clicked = false;
     videoStreams.innerHTML = `<div class="video-container chosen" id="myVideoPlayer"></div>`;
     micIcon.className = "fa-solid fa-microphone";
     camIcon.className = "fa-solid fa-video";
